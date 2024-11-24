@@ -13,6 +13,7 @@ class InputHandler{
 
     int width = 5;
     int height = 5;
+    std::vector<int> nums;
 
     std::vector<int> 
     create_num_vector();
@@ -20,17 +21,26 @@ class InputHandler{
     void 
     gameboard_creation();
 
+    void
+    enemy_rise_gb();
+
     void 
     place_opponent( ShipManager& manager );
 
     void 
-    place_ships( ShipManager& manager1, ShipManager& manager2 );
+    place_ships( ShipManager& manager1 );
 
 public:
     InputHandler();
 
     void 
-    gameboard_initialize( Gameboard& player1, Gameboard& player2, ShipManager& manager1, ShipManager& manager2 );
+    gameboard_initialize( Gameboard& player1, ShipManager& manager1 );
+
+    void
+    e_gameboard_initialize( Gameboard& player2, ShipManager& manager2 );
+
+    void
+    enemy_s_manager( ShipManager& manager2 );
 
     void 
     manager_initialize( ShipManager& manager1, ShipManager& manager2 );

@@ -25,7 +25,6 @@ InputHandler::gameboard_creation(){
             say.ask_gameboard_sizes();
             std::cin >> this->width >> this->height;
             player1 = Gameboard(height, width);
-            player2 = Gameboard(height, width);
             flag = true;
         }
         catch(IncorrectBoardSize& e){
@@ -33,6 +32,11 @@ InputHandler::gameboard_creation(){
             flag = false;
         }
     }while( flag == false );
+}
+
+void
+InputHandler::enemy_rise_gb(){
+    player2 = Gameboard(this->height, this->width);
 }
 
 void 
@@ -62,7 +66,7 @@ InputHandler::place_opponent( ShipManager& manager ){
 }
 
 void 
-InputHandler::place_ships( ShipManager& manager1, ShipManager& manager2 ){
+InputHandler::place_ships( ShipManager& manager1 ){
     int x = 0;
     int y = 0;
     int pos = 0;
@@ -91,22 +95,33 @@ InputHandler::place_ships( ShipManager& manager1, ShipManager& manager2 ){
             }
         }while( flag == false );
     }
-    place_opponent( manager2 );
+    
 }
 
 InputHandler::InputHandler(){}
 
 void 
-InputHandler::gameboard_initialize( Gameboard& player1, Gameboard& player2, ShipManager& manager1, ShipManager& manager2  ){
+InputHandler::gameboard_initialize( Gameboard& player1, ShipManager& manager1  ){
     gameboard_creation();
-    place_ships( manager1, manager2 );
+    place_ships( manager1 );
     player1 = this->player1;
-    player2 = this->player2;
-    // manager1 = this->manager1;
-    // manager2 = this->manager2;
     Printer printer;
     std::vector < std::vector <Cell> > users_gameboard_1 = (this->player1).getUsersGameboard();
     printer.printUsersGameboard( users_gameboard_1, (this->player1).getWidth(), (this->player1).getHeight() );
+}
+
+void 
+InputHandler::e_gameboard_initialize( Gameboard& player2, ShipManager& manager2  ){
+    enemy_rise_gb();
+    place_opponent( manager2 );
+    player2 = this->player2;
+}
+
+void
+InputHandler::enemy_s_manager( ShipManager& manager2 ){
+    std::vector<int> sizes = {1,2,3,4};
+    this->manager2 = ShipManager(this->nums, sizes);
+    manager2 = this->manager2;
 }
 
 void 
@@ -116,9 +131,9 @@ InputHandler::manager_initialize( ShipManager& manager1, ShipManager& manager2 )
     bool flag = false;
     do{
         try{
-            std::vector<int> nums = create_num_vector();
+            this->nums = create_num_vector();
             this->manager1 = ShipManager(nums, sizes);
-            this->manager2 = ShipManager(nums, sizes);
+            //this->manager2 = ShipManager(nums, sizes);
             flag = true;
         }
         catch(LengthDiscrepancy& e){
@@ -131,7 +146,8 @@ InputHandler::manager_initialize( ShipManager& manager1, ShipManager& manager2 )
         }
     }while( flag == false );
     manager1 = this->manager1;
-    manager2 = this->manager2;
+    enemy_s_manager( manager2 );
+    //manager2 = this->manager2;
 }
 
 void

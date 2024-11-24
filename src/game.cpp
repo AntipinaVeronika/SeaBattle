@@ -84,7 +84,8 @@ Game::Game(){
     //InputHandler input;
     say.greeting();
     input.manager_initialize( manager1, manager2 );
-    input.gameboard_initialize( player1, player2, manager1, manager2 );
+    input.gameboard_initialize( player1, manager1 );
+    input.e_gameboard_initialize( player2, manager2 );
     AbilitiesManager queue( player2 );
     this->queue = queue;
 }
@@ -92,11 +93,17 @@ Game::Game(){
 int 
 Game::start(){
     int round_res = 1;
-    while( round_res = 1 ){
+    while( round_res ){
         round_res = round();
-        say.congratulations();
-        return 0;
+        if( round_res ){
+            say.congratulations();
+            input.enemy_s_manager( manager2 );
+            input.e_gameboard_initialize( player2, manager2 );
+        }
+        else{
+            say.dont_be_upset();
+            break;
+        }
     }
-    say.dont_be_upset();
-    return 0;
+    return 1;
 }
