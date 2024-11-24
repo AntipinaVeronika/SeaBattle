@@ -1,4 +1,4 @@
-#include "IAbilities.h"
+#include "../headers/IAbilities.h"
 
 DoubleDamage::DoubleDamage( Gameboard& gameboard ): gameboard(gameboard) {};
     

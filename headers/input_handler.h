@@ -2,7 +2,7 @@
 #define INPHAND
 #include "printer.h"
 #include "message_printer.h"
-#include "incorrect_ability_answ.cpp"
+#include "../src/incorrect_ability_answ.cpp"
 #include <iostream>
 
 class InputHandler{

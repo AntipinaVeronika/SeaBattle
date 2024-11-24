@@ -1,4 +1,4 @@
-#include "ability_manager.h"
+#include "../headers/ability_manager.h"
 
 AbilitiesManager::AbilitiesManager( Gameboard& gameboard ){
     std::vector <IAbility*> abilities = { new DoubleDamage( gameboard ), new Scanner( gameboard ), new Rafale( gameboard ) };

@@ -1,4 +1,4 @@
-#include "printer.h"
+#include "../headers/printer.h"
 
 void
 Printer::printUsersGameboard(std::vector < std::vector <Cell> > p_gameboard, int width, int height ){

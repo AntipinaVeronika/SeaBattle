@@ -1,7 +1,7 @@
 #ifndef MANAGER
 #define MANAGER
 #include "ship.h"
-#include "s_manager_errors.cpp"
+#include "../src/s_manager_errors.cpp"
 
 class ShipManager{
     int ships_count;

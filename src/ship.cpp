@@ -1,4 +1,4 @@
-#include "ship.h"
+#include "../headers/ship.h"
 
 Ship::Ship() = default;
 Ship::Ship(int length, Position position): length(length), position(position){

@@ -1,4 +1,4 @@
-#include "gameboard.h"
+#include "../headers/gameboard.h"
 
 int
 Gameboard::check_placement(int x, int y, Ship* ship, Position position) {

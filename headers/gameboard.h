@@ -1,7 +1,7 @@
 #ifndef GAMEBOARD
 #define GAMEBOARD
 #include "ship_manager.h"
-#include "gameboard_errors.cpp"
+#include "../src/gameboard_errors.cpp"
 
 enum State{
     EMPTY,

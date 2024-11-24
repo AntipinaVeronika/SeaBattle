@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <utility>
-#include "ship_errors.cpp"
+#include "../src/ship_errors.cpp"
 
 enum Segment{
     INTACT,
