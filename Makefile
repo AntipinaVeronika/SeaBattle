@@ -3,7 +3,7 @@ SRC_DIR = ./src
 HEADER_DIR = ./headers
 
 # Список всех объектов
-OBJS = main.o ship.o ship_manager.o gameboard.o game.o IAbilities.o input_handler.o message_printer.o printer.o s_manager_errors.o ship_errors.o ability_manager.o empty_queue_error.o
+OBJS = main.o ship.o ship_manager.o gameboard.o game.o IAbilities.o input_handler.o message_printer.o printer.o s_manager_errors.o ship_errors.o ability_manager.o empty_queue_error.o game_state.o
 
 # Компилятор
 CXX = g++
@@ -15,6 +15,9 @@ all: main
 # Компиляция исполняемого файла
 main: $(OBJS)
 	g++ $(OBJS)
+
+game_state.o: $(SRC_DIR)/game_state.cpp $(HEADER_DIR)/game_state.h
+	g++ -c $(SRC_DIR)/game_state.cpp
 
 empty_queue_error.o: $(SRC_DIR)/empty_queue_error.cpp
 	g++ -c $(SRC_DIR)/empty_queue_error.cpp

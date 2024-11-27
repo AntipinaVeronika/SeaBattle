@@ -97,19 +97,20 @@ Game::round(){
 //         manager1(manager1),manager2(manager2), queue(queue){}
 
 Game::Game(){
-    InputHandler input;
-    say.greeting();
-    input.manager_initialize( manager1, manager2 );
-    input.gameboard_initialize( player1, manager1, placement1 );
-    input.e_gameboard_initialize( player1, player2, manager1, manager2, placement2 );
-    AbilitiesManager* queue = new AbilitiesManager( player2 );
-    this->queue = queue;
-    this->state = new GameState( &player1, &player2, &manager1, &manager2, queue, placement1, placement2 );
+    // InputHandler input;
+    // say.greeting();
+    this->state = new GameState();
+    // (this->input).manager_initialize( *(state->manager1), *(state->manager2) );
+    // input.gameboard_initialize( *(state->player1), *(state->manager1), placement1 );
+    // input.e_gameboard_initialize( *(state->player1), *(state->player2), *(state->manager1), *(state->manager2), placement2 );
+    // AbilitiesManager* queue = new AbilitiesManager( *(state->player2) );
+    // this->queue = queue;
+    //this->state = new GameState( &player1, &player2, &manager1, &manager2, queue, placement1, placement2 );
    // this->state = GameState();
 }
 
 Game::~Game(){
-    delete queue;
+    //delete queue;
     delete state;
 }
 
@@ -120,8 +121,8 @@ Game::start(){
         round_res = round();
         if( round_res ){
             say.congratulations();
-            input.enemy_s_manager( manager1, *(state->manager2) );
-            input.e_gameboard_initialize( player1, *(state->player2), manager1, *(state->manager2), placement2 );
+            (state->input).enemy_s_manager( *(state->manager1), *(state->manager2) );
+            (state->input).e_gameboard_initialize( *(state->player1), *(state->player2), *(state->manager1), *(state->manager2), state->placement2 );
         }
         else{
             say.dont_be_upset();

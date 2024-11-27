@@ -14,6 +14,9 @@ public:
     Ship* ship;
     int seg_idx;
     Cell(): state(State::EMPTY), ship(nullptr), seg_idx(-1){}
+    ~Cell(){
+        delete ship;
+    }
 };
 
 class Gameboard{

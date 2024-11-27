@@ -77,3 +77,45 @@ void
 MessagePrinter::crime_and_punishment(){
     std::cout << "But still - no ability is being activated now\n";
 }
+
+void
+MessagePrinter::save_start(){
+    std::cout << "Saving in process!\n";
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << ".\n";
+}
+
+void
+MessagePrinter::save_completed(){
+    std::cout << "Saved!\n";
+}
+
+void
+MessagePrinter::loading(){
+    std::cout << "Loading...\n";
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << '.';
+    std::cout << ".\n";
+}
+
+void
+MessagePrinter::game_loaded(){
+    std::cout << "Load is done!\n";
+}

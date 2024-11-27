@@ -42,5 +42,17 @@ public:
 
     void
     crime_and_punishment();
+
+    void
+    save_start();
+
+    void
+    save_completed();
+
+    void
+    loading();
+
+    void
+    game_loaded();
 };
 #endif

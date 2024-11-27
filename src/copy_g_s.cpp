@@ -1,31 +1,9 @@
 #include "../headers/game_state.h"
 
-// GameState::GameState( Gameboard* player1, Gameboard* player2, ShipManager* manager1, ShipManager* manager2, AbilitiesManager* queue, std::vector<std::vector<int>>& placement1, std::vector<std::vector<int>>& placement2 ):
-//     player1(player1),player2(player2),manager1(manager1),manager2(manager2),queue(queue), placement1(placement1), placement2(placement2){
+GameState::GameState( Gameboard* player1, Gameboard* player2, ShipManager* manager1, ShipManager* manager2, AbilitiesManager* queue, std::vector<std::vector<int>>& placement1, std::vector<std::vector<int>>& placement2 ):
+    player1(player1),player2(player2),manager1(manager1),manager2(manager2),queue(queue), placement1(placement1), placement2(placement2){
 
-//     }
-
-GameState::GameState(){
-    MessagePrinter say;
-    this->manager1 = new ShipManager();
-    this->manager2 = new ShipManager();
-    this->player1 = new Gameboard();
-    this->player2 = new Gameboard();
-    say.greeting();
-    (this->input).manager_initialize( *(manager1), *(manager2) );
-    input.gameboard_initialize( *(player1), *(manager1), placement1 );
-    input.e_gameboard_initialize( *(player1), *(player2), *(manager1), *(manager2), placement2 );
-    AbilitiesManager* queue = new AbilitiesManager( *(player2) );
-    this->queue = queue;
-}
-
-GameState::~GameState(){
-    delete this->manager1;
-    delete this->manager2;
-    delete this->player1;
-    delete this->player2;
-    delete this->queue;
-}
+    }
 
 std::ostream& operator<<( std::ostream& out, const GameState& state ){
     //ShipManager1&2
@@ -72,24 +50,6 @@ std::ostream& operator<<( std::ostream& out, const GameState& state ){
     for( int i = 0; i < state.placement1.size(); ++i ){
         out << std::to_string(state.placement1.at(i).at(0)) + ' ' +std::to_string(state.placement1.at(i).at(1)) + ' ' + std::to_string(state.placement1.at(i).at(2)) + '\n'; 
     }
-
-    std::vector<std::vector<int>> empties;
-    int vec_i = 0;
-    std::vector<std::vector<Cell>> hidden = state.player2->getHiddenGameboard();
-    for( int j = 0; j < state.player2->getHeight(); ++j ){
-        for( int i = 0; i < state.player2->getWidth(); ++i ){
-            if( hidden.at(j).at(i).state == State::EMPTY ){
-                empties.resize(vec_i + 1);
-                empties.at(vec_i).resize(2);
-                empties.at(vec_i++) = { i, j };
-            }
-        }
-    }
-    out << std::to_string(vec_i) + '\n';
-    for( int v = 0; v < vec_i; ++v ){
-        out << std::to_string( empties.at(v).at(0) ) + ' ' + std::to_string( empties.at(v).at(1) ) << '\n';
-    }
-
     //Gameboard2
     for( int i = 0; i < state.placement2.size(); ++i ){
         out << std::to_string(state.placement2.at(i).at(0)) + ' ' + std::to_string(state.placement2.at(i).at(1)) + ' ' + std::to_string(state.placement2.at(i).at(2)) + '\n'; 
@@ -118,9 +78,6 @@ std::istream& operator>>( std::istream& in, GameState& state ){
         sizes.push_back(std::stoi(unsplitted));
     }
 
-    delete state.manager1;
-    delete state.manager2;
-
     state.manager1 = new ShipManager( nums, sizes );
     state.manager2 = new ShipManager( nums, sizes );
 
@@ -128,9 +85,6 @@ std::istream& operator>>( std::istream& in, GameState& state ){
     std::string users;
     std::string robo;
     std::vector<std::string> un = {"",""};
-    std::vector<std::vector<int>> indexes_to_hit;
-    indexes_to_hit.resize(capacity);
-
     for( int i = 0; i < capacity; ++i ){
         un.erase( un.begin(), un.end() );
         std::getline(in, unsplitted);//n  
@@ -147,13 +101,16 @@ std::istream& operator>>( std::istream& in, GameState& state ){
 
         for( int j = 0; j < n; ++j ){
             if( users[j] != '0' ){
-                if( users[j] == '2' )
+                if( users[j] == '1' )
                     state.manager1->getShipIdx(i)->damage( j, 1 );
+                else
+                    state.manager1->getShipIdx(i)->damage( j, 2 );
             }
             if( robo[j] != '0' ){
-                if( robo[j] == '2' )
+                if( robo[j] == '1' )
                     state.manager2->getShipIdx(i)->damage( j, 1 );
-                indexes_to_hit.at(i).push_back(j);
+                else
+                    state.manager2->getShipIdx(i)->damage( j, 2 );
             }
         }
     }
@@ -174,13 +131,9 @@ std::istream& operator>>( std::istream& in, GameState& state ){
         throw IncorrectBoardSize();
     }
 
-    delete state.player1;
-    delete state.player2;
-
     state.player1 = new Gameboard( height, width );
     state.player2 = new Gameboard( height, width );
 
-    state.placement1.erase(state.placement1.begin(),state.placement1.end());
     for( int i = 0; i < capacity; i++ ){
         int x, y, pos;
         std::vector<int> u;
@@ -195,25 +148,9 @@ std::istream& operator>>( std::istream& in, GameState& state ){
             y = u[1];
             pos = u[2];
         }
-        state.player1->addShip( state.manager1->getShipIdx(i), x, y, Position(pos) );
-        state.placement1.push_back({x,y,pos});
+        state.player1->addShip( state.manager1->getShipIdx(i), x, y, Position(pos) ); 
     }
-
-    std::getline(in, unsplitted);
-    int vec_i = std::stoi(unsplitted);
-    for( int v = 0; v < vec_i; ++v ){
-        int x, y;
-        std::getline(in, unsplitted);
-        std::istringstream h(unsplitted);
-        getline(h, unsplitted, ' ');
-        x = std::stoi(unsplitted);
-        getline(h, unsplitted, ' ');
-        y = std::stoi(unsplitted);
-        state.player2->hitShip( x, y );
-    }
-
-    state.placement2.erase(state.placement2.begin(),state.placement2.end());
-    for( int i = 0; i < capacity; i++ ){
+        for( int i = 0; i < capacity; i++ ){
         int x, y, pos;
         std::vector<int> u;
         // in >> x >> y >> pos;
@@ -229,21 +166,10 @@ std::istream& operator>>( std::istream& in, GameState& state ){
         }
 
         state.player2->addShip( state.manager2->getShipIdx(i), x, y, Position(pos) );
-        state.placement2.push_back({x,y,pos});
-
-        if( indexes_to_hit.at(i).size() ){
-            for( int idx = 0; idx < indexes_to_hit.at(i).size(); ++idx ){
-                if( pos )
-                    state.player2->hitShip( x + indexes_to_hit.at(i).at(idx), y );
-                else
-                    state.player2->hitShip( x, y + indexes_to_hit.at(i).at(idx) );
-            }
-        }
     }
     //Abilities
     std::string secret_coded_queue;
     AbilitiesManager q = AbilitiesManager();
-
     *(state.queue) = q;
     std::getline(in, secret_coded_queue); 
     for( int i = 0; i < secret_coded_queue.size(); ++i ){
