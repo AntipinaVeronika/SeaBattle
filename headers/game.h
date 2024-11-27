@@ -12,11 +12,17 @@ class Game{
     // ShipManager manager2;
     // AbilitiesManager* queue;
     MessagePrinter say;
-    InputHandler input;
+   // InputHandler input;
     GameState* state;
 
     void
     move( int& count );
+
+    void
+    save();
+
+    void
+    load();
 
     int round();
 public:

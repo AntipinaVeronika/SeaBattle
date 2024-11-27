@@ -1,5 +1,7 @@
 #include "../headers/game_state.h"
 #include "../headers/game.h"
+#include "file_not_found.cpp"
+#include "cheating_alert.cpp"
 //think about it!
 void
 Game::move( int& count ){
@@ -9,13 +11,19 @@ Game::move( int& count ){
     std::cout << "Do you want to save the game?\n";
     std::cin >> answer;
     if( answer ){
-        state->save();
-        state->load();
+        try{
+            save();
+            load();
+        }catch( FileDoesNotExist& e ){
+            std::cout << e.what();
+        }catch( CheatingAlert& e ){
+            std::cout << e.what();
+        }
     }
 
     say.ability_needed();
     try{
-        input.get_answer( answer );
+        state->input.get_answer( answer );
     }
     catch( IncorrectAbilityAnswer& e ){
         std::cout << e.what();
@@ -36,7 +44,7 @@ Game::move( int& count ){
     bool flag = false;
     do{
         try{
-            input.get_x_y( x, y );
+            state->input.get_x_y( x, y );
             state->player2->hitShip( x, y );
             std::cout << "COUNT: " << count << "ARENOW: " << state->manager2->areLeft() << '\n';
             flag = true;
@@ -50,6 +58,16 @@ Game::move( int& count ){
         state->queue->addAbility( *(state->player2) );
         count = state->manager2->areLeft();
     }
+}
+
+void
+Game::save(){
+    state->save();
+}
+
+void
+Game::load(){
+    state->load();
 }
 
 int

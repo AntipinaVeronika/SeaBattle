@@ -1,5 +1,6 @@
 #include "../headers/game_state.h"
 #include "file_not_found.cpp"
+#include "cheating_alert.cpp"
 // GameState::GameState( Gameboard* player1, Gameboard* player2, ShipManager* manager1, ShipManager* manager2, AbilitiesManager* queue, std::vector<std::vector<int>>& placement1, std::vector<std::vector<int>>& placement2 ):
 //     player1(player1),player2(player2),manager1(manager1),manager2(manager2),queue(queue), placement1(placement1), placement2(placement2){
 
@@ -21,7 +22,10 @@ GameState::GameState(){
         try{
             this->load();
         }catch( FileDoesNotExist& e ){
-            std::cout << e.what() << '\n';
+            std::cout << e.what();
+            exit(0);
+        }catch( CheatingAlert& e ){
+            std::cout << e.what();
             exit(0);
         }
     }else{
@@ -278,7 +282,27 @@ std::istream& operator>>( std::istream& in, GameState& state ){
 
     return in;
 }    
+
+int
+GameState::getSum(){
+    int sum = 0;
+    std::ifstream file("seabattle.txt");
+    std::string line;
+    if( !file.is_open() ){
+        throw FileDoesNotExist();
+    }
+    while( std::getline(file, line) )
+    {
+        std::getline(file, line);
+        for( char num: line ){
+            sum += int(num)*2;
+        }
+    }
     
+    file.close(); 
+    return sum;
+}
+
 void
 GameState::save(){
     MessagePrinter say;
@@ -290,6 +314,15 @@ GameState::save(){
         out << *this;
     }
     out.close(); 
+    std::ofstream strict;
+    strict.open("check.txt");
+    if( strict.is_open()){
+        int control_sum = getSum();
+        strict << control_sum;
+    }else{
+        exit(0);
+    }
+    strict.close();
     say.save_completed();
 }
 
@@ -297,6 +330,19 @@ void
 GameState::load(){
     MessagePrinter say;
     say.loading();
+    int current_sum = getSum();
+    int correct = 0;
+    std::ifstream strict;
+    strict.open("check.txt");
+    if( strict.is_open() ){
+        strict >> correct;
+    }
+    strict.close();
+    if( correct != current_sum ){
+        throw CheatingAlert();
+    }
+
+
     std::ifstream in("seabattle.txt"); // окрываем файл для чтения
     if (in.is_open())
     {
