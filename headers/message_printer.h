@@ -54,5 +54,8 @@ public:
 
     void
     game_loaded();
+
+    void
+    load_needed();
 };
 #endif

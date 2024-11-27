@@ -59,7 +59,6 @@ InputHandler::place_opponent( ShipManager& manager1, ShipManager& manager, std::
                 x = std::rand() % (this->width);
                 y = std::rand() % (this->height);
                 pos = std::rand() % 2;
-                std::cout << manager.getShipIdx(i)->getLength() << '\n';
                 player2.addShip( manager.getShipIdx(i), x, y, Position(pos) );
                 flag = true;
             }

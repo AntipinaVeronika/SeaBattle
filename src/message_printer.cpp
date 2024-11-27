@@ -81,17 +81,6 @@ MessagePrinter::crime_and_punishment(){
 void
 MessagePrinter::save_start(){
     std::cout << "Saving in process!\n";
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << ".\n";
 }
 
 void
@@ -102,20 +91,14 @@ MessagePrinter::save_completed(){
 void
 MessagePrinter::loading(){
     std::cout << "Loading...\n";
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << '.';
-    std::cout << ".\n";
 }
 
 void
 MessagePrinter::game_loaded(){
     std::cout << "Load is done!\n";
+}
+
+void
+MessagePrinter::load_needed(){
+    std::cout << "Do you want to load game? (1/0)\n";
 }

@@ -1,5 +1,5 @@
 #include "../headers/game_state.h"
-
+#include "file_not_found.cpp"
 // GameState::GameState( Gameboard* player1, Gameboard* player2, ShipManager* manager1, ShipManager* manager2, AbilitiesManager* queue, std::vector<std::vector<int>>& placement1, std::vector<std::vector<int>>& placement2 ):
 //     player1(player1),player2(player2),manager1(manager1),manager2(manager2),queue(queue), placement1(placement1), placement2(placement2){
 
@@ -11,12 +11,27 @@ GameState::GameState(){
     this->manager2 = new ShipManager();
     this->player1 = new Gameboard();
     this->player2 = new Gameboard();
+    this->queue = new AbilitiesManager();
     say.greeting();
-    (this->input).manager_initialize( *(manager1), *(manager2) );
-    input.gameboard_initialize( *(player1), *(manager1), placement1 );
-    input.e_gameboard_initialize( *(player1), *(player2), *(manager1), *(manager2), placement2 );
-    AbilitiesManager* queue = new AbilitiesManager( *(player2) );
-    this->queue = queue;
+    say.load_needed();
+
+    int answer = 0;
+    input.get_answer( answer );
+    if( answer ){
+        try{
+            this->load();
+        }catch( FileDoesNotExist& e ){
+            std::cout << e.what() << '\n';
+            exit(0);
+        }
+    }else{
+        (this->input).manager_initialize( *(manager1), *(manager2) );
+        input.gameboard_initialize( *(player1), *(manager1), placement1 );
+        input.e_gameboard_initialize( *(player1), *(player2), *(manager1), *(manager2), placement2 );
+        AbilitiesManager* queue = new AbilitiesManager( *(player2) );
+        delete this->queue;
+        this->queue = queue;
+    }
 }
 
 GameState::~GameState(){
@@ -129,7 +144,9 @@ std::istream& operator>>( std::istream& in, GameState& state ){
     std::string robo;
     std::vector<std::string> un = {"",""};
     std::vector<std::vector<int>> indexes_to_hit;
+    std::vector<std::vector<int>> indexes_to_hit_me;
     indexes_to_hit.resize(capacity);
+    indexes_to_hit_me.resize(capacity);
 
     for( int i = 0; i < capacity; ++i ){
         un.erase( un.begin(), un.end() );
@@ -137,7 +154,6 @@ std::istream& operator>>( std::istream& in, GameState& state ){
         n = std::stoi(unsplitted);
 
         std::getline(in, unsplitted);
-        std::cout << unsplitted << '\n';
         std::istringstream a(unsplitted);
         while( getline( a, unsplitted, ' ' ) ){
             un.push_back(unsplitted);
@@ -149,6 +165,7 @@ std::istream& operator>>( std::istream& in, GameState& state ){
             if( users[j] != '0' ){
                 if( users[j] == '2' )
                     state.manager1->getShipIdx(i)->damage( j, 1 );
+                indexes_to_hit_me.at(i).push_back(j);
             }
             if( robo[j] != '0' ){
                 if( robo[j] == '2' )
@@ -197,6 +214,14 @@ std::istream& operator>>( std::istream& in, GameState& state ){
         }
         state.player1->addShip( state.manager1->getShipIdx(i), x, y, Position(pos) );
         state.placement1.push_back({x,y,pos});
+        if( indexes_to_hit_me.at(i).size() ){
+            for( int idx = 0; idx < indexes_to_hit_me.at(i).size(); ++idx ){
+                if( pos )
+                    state.player1->hitShip( x + indexes_to_hit_me.at(i).at(idx), y );
+                else
+                    state.player1->hitShip( x, y + indexes_to_hit_me.at(i).at(idx) );
+            }
+        }
     }
 
     std::getline(in, unsplitted);
@@ -262,7 +287,6 @@ GameState::save(){
     out.open("seabattle.txt");      // открываем файл для записи
     if (out.is_open())
     {
-        std::cout << "Not here\n";
         out << *this;
     }
     out.close(); 
@@ -277,6 +301,8 @@ GameState::load(){
     if (in.is_open())
     {
         in >> *this;
+    }else{
+        throw FileDoesNotExist();
     }
     in.close();
     say.game_loaded();
