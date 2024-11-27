@@ -35,46 +35,56 @@ InputHandler::gameboard_creation(){
 }
 
 void
-InputHandler::enemy_rise_gb(){
-    player2 = Gameboard(this->height, this->width);
+InputHandler::enemy_rise_gb( int height, int width ){
+    this->height = height;
+    this->width = width;
+    this->player2 = Gameboard( this->height, this->width );
 }
 
 void 
-InputHandler::place_opponent( ShipManager& manager ){
+InputHandler::place_opponent( ShipManager& manager1, ShipManager& manager, std::vector<std::vector<int>>& placement2 ){
     int x = 0;
     int y = 0;
     int pos = 0;
 
+    placement2.resize(manager1.getCapacity());
     time_t timer;
     std::srand(time(&timer));
     //opponents' placement
     for( int i = manager1.getCapacity()-1; i>-1; i-- ){
+        placement2.at(i).resize(3);
         bool flag = false;
         do{
             try{
                 x = std::rand() % (this->width);
                 y = std::rand() % (this->height);
                 pos = std::rand() % 2;
+                std::cout << manager.getShipIdx(i)->getLength() << '\n';
                 player2.addShip( manager.getShipIdx(i), x, y, Position(pos) );
                 flag = true;
             }
             catch(PlacementError& e){
                 flag = false;
             }
+            if( flag ){
+                placement2.at(i) = { x, y, pos };
+            }
         } while( flag == false );
     }
 }
 
 void 
-InputHandler::place_ships( ShipManager& manager1 ){
+InputHandler::place_ships( ShipManager& manager1, std::vector<std::vector<int>>& placement1 ){
     int x = 0;
     int y = 0;
     int pos = 0;
     Printer printer;
     MessagePrinter say;
+    placement1.resize(manager1.getCapacity());
 
     for( int i = manager1.getCapacity()-1; i>-1; i-- ){
         bool flag = false;
+        placement1.at(i).resize(3);
             
         std::vector < std:: vector <Cell> > users_gameboard_1;
 
@@ -93,6 +103,9 @@ InputHandler::place_ships( ShipManager& manager1 ){
                 std::cout << e.what();
                 flag = false;
             }
+            if( flag ){
+                placement1.at(i) = { x, y, pos };
+            }
         }while( flag == false );
     }
     
@@ -101,9 +114,9 @@ InputHandler::place_ships( ShipManager& manager1 ){
 InputHandler::InputHandler(){}
 
 void 
-InputHandler::gameboard_initialize( Gameboard& player1, ShipManager& manager1  ){
+InputHandler::gameboard_initialize( Gameboard& player1, ShipManager& manager1, std::vector<std::vector<int>>& placement1 ){
     gameboard_creation();
-    place_ships( manager1 );
+    place_ships( manager1, placement1 );
     player1 = this->player1;
     Printer printer;
     std::vector < std::vector <Cell> > users_gameboard_1 = (this->player1).getUsersGameboard();
@@ -111,15 +124,53 @@ InputHandler::gameboard_initialize( Gameboard& player1, ShipManager& manager1  )
 }
 
 void 
-InputHandler::e_gameboard_initialize( Gameboard& player2, ShipManager& manager2  ){
-    enemy_rise_gb();
-    place_opponent( manager2 );
+InputHandler::e_gameboard_initialize( Gameboard& player1, Gameboard& player2, ShipManager& manager1, ShipManager& manager2, std::vector<std::vector<int>>& placement2 ){
+    enemy_rise_gb( player1.getHeight(), player1.getWidth() );
+    place_opponent( manager1, manager2, placement2 );
     player2 = this->player2;
 }
 
 void
-InputHandler::enemy_s_manager( ShipManager& manager2 ){
+InputHandler::enemy_s_manager( ShipManager& manager1, ShipManager& manager2 ){
     std::vector<int> sizes = {1,2,3,4};
+    if( this->nums.size()==0 ){
+        std::vector<int> n;
+        Ship* ship1 = manager1.getShipIdx(0);
+
+        int length = ship1->getLength();
+        int cur = 1;
+        int count = 0;
+        if( length != cur ){
+            n.push_back(0);
+            cur++;
+        }
+        for( int i = 0; i < manager1.getCapacity(); ++i ){
+                ship1 = manager1.getShipIdx(i);
+
+                if( length != ship1->getLength() ){
+                    n.push_back(count);
+                    count = 0;
+                    length = ship1->getLength();
+                    cur++;
+                }
+                if( length != cur ){
+                    n.push_back(0);
+                    cur++;
+                }
+
+                length = ship1->getLength();
+                count++;
+        }
+        n.push_back( count );
+        if( length < 5 ){
+            for( int i = length+1; i < 5; i++ ){
+                n.push_back(0);
+            }
+        }
+
+        this->nums = n;
+    }
+
     this->manager2 = ShipManager(this->nums, sizes);
     manager2 = this->manager2;
 }
@@ -146,7 +197,7 @@ InputHandler::manager_initialize( ShipManager& manager1, ShipManager& manager2 )
         }
     }while( flag == false );
     manager1 = this->manager1;
-    enemy_s_manager( manager2 );
+    enemy_s_manager( manager1, manager2 );
     //manager2 = this->manager2;
 }
 

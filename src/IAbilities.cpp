@@ -1,6 +1,8 @@
 #include "../headers/IAbilities.h"
 
 DoubleDamage::DoubleDamage( Gameboard& gameboard ): gameboard(gameboard) {};
+DoubleDamage::DoubleDamage(const DoubleDamage& other)
+    : gameboard(other.gameboard) {}
     
 void 
 DoubleDamage::activateAbility(){
@@ -9,7 +11,19 @@ DoubleDamage::activateAbility(){
     printer.double_damage_activated();
 }
 
+IAbility*
+DoubleDamage::clone(){
+    return new DoubleDamage(*this);
+}
+
+char
+DoubleDamage::secretCode(){
+    return '0';
+}
+
 Scanner::Scanner( Gameboard& gameboard ): gameboard(gameboard){}
+Scanner::Scanner(const Scanner& other)
+    : gameboard(other.gameboard) {}
 
 void 
 Scanner::activateAbility(){
@@ -39,7 +53,19 @@ Scanner::activateAbility(){
     printer.scanner_message( f );
 }
 
+char
+Scanner::secretCode(){
+    return '1';
+}
+
+IAbility*
+Scanner::clone(){
+    return new Scanner(*this);
+}
+
 Rafale::Rafale( Gameboard& gameboard ): gameboard(gameboard){}
+Rafale::Rafale(const Rafale& other)
+    : gameboard(other.gameboard) {}
 
 void 
 Rafale::activateAbility(){
@@ -54,6 +80,16 @@ Rafale::activateAbility(){
     }
     gameboard.hitShip( x, y );
     printer.rafale();
+}
+
+char
+Rafale::secretCode(){
+    return '2';
+}
+
+IAbility*
+Rafale::clone(){
+    return new Rafale(*this);
 }
 
 // int main(){
