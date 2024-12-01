@@ -293,9 +293,9 @@ GameState::getSum(){
     }
     while( std::getline(file, line) )
     {
-        std::getline(file, line);
+        //std::getline(file, line);
         for( char num: line ){
-            sum += int(num)*2;
+            sum += (int(num)+2153)*6319;
         }
     }
     
