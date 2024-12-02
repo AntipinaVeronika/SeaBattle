@@ -1,7 +1,8 @@
 #include "../headers/game_state.h"
 #include "../headers/game.h"
-#include "file_not_found.cpp"
-#include "cheating_alert.cpp"
+// #include "file_not_found.cpp"
+// #include "cheating_alert.cpp"
+#include "keeper.cpp"
 //think about it!
 void
 Game::move( int& count ){
@@ -13,6 +14,17 @@ Game::move( int& count ){
     if( answer ){
         try{
             save();
+        }catch( FileDoesNotExist& e ){
+            std::cout << e.what();
+        }catch( CheatingAlert& e ){
+            std::cout << e.what();
+        }
+    }
+
+    std::cout << "Do you want to load the game?\n";
+    std::cin >> answer;
+    if( answer ){
+        try{
             load();
         }catch( FileDoesNotExist& e ){
             std::cout << e.what();
@@ -62,12 +74,14 @@ Game::move( int& count ){
 
 void
 Game::save(){
-    state->save();
+    Keeper* save;
+    save->save( state );
 }
 
 void
 Game::load(){
-    state->load();
+    Keeper* load;
+    load->load( state );
 }
 
 int
