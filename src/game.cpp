@@ -2,7 +2,7 @@
 #include "../headers/game.h"
 // #include "file_not_found.cpp"
 // #include "cheating_alert.cpp"
-#include "keeper.cpp"
+#include "save_load.cpp"
 //think about it!
 void
 Game::move( int& count ){
@@ -74,16 +74,16 @@ Game::move( int& count ){
 
 void
 Game::save(){
-    // Keeper* save;
-    // save->save( state );
-    state->save();
+    SaveLoad save;
+    save.save(this->state);
+    //state->save();
 }
 
 void
 Game::load(){
-    // Keeper* load;
-    // load->load( state );
-    state->load();
+    SaveLoad load;
+    load.load(this->state);
+   // state->load();
 }
 
 int

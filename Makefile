@@ -3,7 +3,7 @@ SRC_DIR = ./src
 HEADER_DIR = ./headers
 
 # Список всех объектов
-OBJS = main.o ship.o ship_manager.o gameboard.o game.o IAbilities.o input_handler.o message_printer.o printer.o s_manager_errors.o ship_errors.o ability_manager.o empty_queue_error.o game_state.o cheating_alert.o file_not_found.o
+OBJS = main.o ship.o ship_manager.o gameboard.o game.o IAbilities.o input_handler.o message_printer.o printer.o s_manager_errors.o ship_errors.o ability_manager.o empty_queue_error.o game_state.o cheating_alert.o file_not_found.o save_load.o keeper.o
 
 # Компилятор
 CXX = g++
@@ -15,6 +15,12 @@ all: main
 # Компиляция исполняемого файла
 main: $(OBJS)
 	g++ $(OBJS)
+
+save_load.o: $(SRC_DIR)/save_load.cpp keeper.o
+	g++ -c $(SRC_DIR)/save_load.cpp
+
+keeper.o: $(SRC_DIR)/keeper.cpp
+	g++ -c $(SRC_DIR)/keeper.cpp
 
 file_not_found.o: $(SRC_DIR)/file_not_found.cpp
 	g++ -c $(SRC_DIR)/file_not_found.cpp
@@ -31,7 +37,7 @@ empty_queue_error.o: $(SRC_DIR)/empty_queue_error.cpp
 ability_manager.o: $(SRC_DIR)/ability_manager.cpp $(HEADER_DIR)/ability_manager.h 
 	g++ -c $(SRC_DIR)/ability_manager.cpp
 
-game.o: $(HEADER_DIR)/game.h $(SRC_DIR)/game.cpp printer.o $(HEADER_DIR)/ability_manager.h ship_manager.o file_not_found.o cheating_alert.o
+game.o: $(HEADER_DIR)/game.h $(SRC_DIR)/game.cpp printer.o $(HEADER_DIR)/ability_manager.h ship_manager.o file_not_found.o cheating_alert.o save_load.o
 	g++ -c $(SRC_DIR)/game.cpp
 
 IAbilities.o: $(SRC_DIR)/IAbilities.cpp $(HEADER_DIR)/IAbilities.h $(HEADER_DIR)/message_printer.h $(HEADER_DIR)/input_handler.h

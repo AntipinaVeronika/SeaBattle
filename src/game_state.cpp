@@ -1,5 +1,5 @@
 //#include "../headers/game_state.h"
-#include "keeper.cpp"
+#include "save_load.cpp"
 // #include "file_not_found.cpp"
 // #include "cheating_alert.cpp"
 // // GameState::GameState( Gameboard* player1, Gameboard* player2, ShipManager* manager1, ShipManager* manager2, AbilitiesManager* queue, std::vector<std::vector<int>>& placement1, std::vector<std::vector<int>>& placement2 ):
@@ -19,12 +19,12 @@ GameState::GameState(){
 
     int answer = 0;
     input.get_answer( answer );
-    std::cout << "ANSWER: " << answer << '\n';
-   // Keeper keeper;
-    if( answer==1 ){
+
+    SaveLoad saveload;
+    if( answer ){
         try{
-           // keeper.load( this );
-            load();
+           saveload.load(this);
+            //load();
         }catch( FileDoesNotExist& e ){
             std::cout << e.what();
             exit(0);

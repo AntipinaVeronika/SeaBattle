@@ -1,70 +1,80 @@
-#include "../headers/game_state.h"
+// #include "../headers/game_state.h"
 #include "secret_agent.cpp"
 
-class Keeper{
+// class Keeper{
+// private:
+//     std::fstream file;
+//     std::fstream strict;
+//     GameState* state;
+// public:
+//     Keeper( GameState* state ):state(state){
+//         file.open("seabattle.txt");
+//         if( !file.is_open() ){
+//             throw FileDoesNotExist();
+//         }
+
+//         strict.open("check.txt");
+//         if( !strict.is_open() )
+//             throw CheatingAlert();
+//     }
+//     ~Keeper(){
+//         file.close();
+//         strict.close();
+//     }
+//     void
+//     save( ){
+//         MessagePrinter say;
+//         say.save_start();
+
+//         if (file.is_open())
+//         {
+//             file << *state;
+//         }
+
+//         say.save_completed();
+//     }
+//     void
+//     load( ){
+//         MessagePrinter say;
+//         say.loading();
+
+//         if (file.is_open())
+//         {
+//             file >> *state;
+//         }else{
+//             throw FileDoesNotExist();
+//         }
+
+//         say.game_loaded();
+//     }
+// };
+#include <fstream>
+#include "../headers/game_state.h"
+
+class SaveKeeper {
 private:
-    std::fstream file;
-    std::fstream strict;
+    std::ofstream file;
 public:
-    Keeper(){
-        file.open("seabattle.txt");
-        if( !file.is_open() ){
+    SaveKeeper(GameState* state) {
+        file.open("seabattle.txt", std::ios::out | std::ios::trunc);
+        if (!file.is_open()) {
             throw FileDoesNotExist();
         }
-
-        strict.open("check.txt");
-        if( !strict.is_open() )
-            throw CheatingAlert();
-    }
-    ~Keeper(){
+        file << *state;
         file.close();
-        strict.close();
     }
-    void
-    save( GameState* state ){
-        MessagePrinter say;
-        say.save_start();
+};
 
-        if (file.is_open())
-        {
-            file << *state;
-        }
-
-        SecretAgent agent_007;
-        if( strict.is_open()){
-            int control_sum = agent_007.getSum();
-            strict << control_sum;
-        }else{
-            exit(0);
-        }
-
-        say.save_completed();
-    }
-    void
-    load( GameState* state ){
-        MessagePrinter say;
-        say.loading();
-
-        SecretAgent agent_007;
-        int current_sum = agent_007.getSum();
-        int correct = 0;
-        std::ifstream strict;
-
-        if( strict.is_open() ){
-            strict >> correct;
-        }
-
-        if( correct != current_sum ){
-            throw CheatingAlert();
-        }
-
-        if (file.is_open())
-        {
-            file >> *state;
-        }else{
+class LoadKeeper {
+private:
+    std::ifstream file;
+public:
+    LoadKeeper(GameState* state) {
+        file.open("seabattle.txt");
+        if (!file.is_open()) {
             throw FileDoesNotExist();
         }
-
-        say.game_loaded();
+        file >> *state;
+        file.close();
     }
 };
