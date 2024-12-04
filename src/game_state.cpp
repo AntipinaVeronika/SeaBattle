@@ -19,10 +19,10 @@ GameState::GameState(){
 
     int answer = 0;
     input.get_answer( answer );
-    Keeper* keeper;
+    Keeper keeper;
     if( answer ){
         try{
-            keeper->load( this );
+            keeper.load( this );
         }catch( FileDoesNotExist& e ){
             std::cout << e.what();
             exit(0);
