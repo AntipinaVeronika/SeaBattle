@@ -1,4 +1,4 @@
-#include "../headers/game_state.h"
+//#include "../headers/game_state.h"
 #include "keeper.cpp"
 // #include "file_not_found.cpp"
 // #include "cheating_alert.cpp"
@@ -19,10 +19,12 @@ GameState::GameState(){
 
     int answer = 0;
     input.get_answer( answer );
-    Keeper keeper;
-    if( answer ){
+    std::cout << "ANSWER: " << answer << '\n';
+   // Keeper keeper;
+    if( answer==1 ){
         try{
-            keeper.load( this );
+           // keeper.load( this );
+            load();
         }catch( FileDoesNotExist& e ){
             std::cout << e.what();
             exit(0);
@@ -285,73 +287,73 @@ std::istream& operator>>( std::istream& in, GameState& state ){
     return in;
 }    
 
-// int
-// GameState::getSum(){
-//     int sum = 0;
-//     std::ifstream file("seabattle.txt");
-//     std::string line;
-//     if( !file.is_open() ){
-//         throw FileDoesNotExist();
-//     }
-//     while( std::getline(file, line) )
-//     {
-//         //std::getline(file, line);
-//         for( char num: line ){
-//             sum += (int(num)+2153)*6319;
-//         }
-//     }
+int
+GameState::getSum(){
+    int sum = 0;
+    std::ifstream file("seabattle.txt");
+    std::string line;
+    if( !file.is_open() ){
+        throw FileDoesNotExist();
+    }
+    while( std::getline(file, line) )
+    {
+        //std::getline(file, line);
+        for( char num: line ){
+            sum += (int(num)+2153)*6319;
+        }
+    }
     
-//     file.close(); 
-//     return sum;
-// }
+    file.close(); 
+    return sum;
+}
 
-// void
-// GameState::save(){
-//     MessagePrinter say;
-//     say.save_start();
-//     std::ofstream out;
-//     out.open("seabattle.txt");      // открываем файл для записи
-//     if (out.is_open())
-//     {
-//         out << *this;
-//     }
-//     out.close(); 
-//     std::ofstream strict;
-//     strict.open("check.txt");
-//     if( strict.is_open()){
-//         int control_sum = getSum();
-//         strict << control_sum;
-//     }else{
-//         exit(0);
-//     }
-//     strict.close();
-//     say.save_completed();
-// }
+void
+GameState::save(){
+    MessagePrinter say;
+    say.save_start();
+    std::ofstream out;
+    out.open("seabattle.txt");      // открываем файл для записи
+    if (out.is_open())
+    {
+        out << *this;
+    }
+    out.close(); 
+    std::ofstream strict;
+    strict.open("check.txt");
+    if( strict.is_open()){
+        int control_sum = getSum();
+        strict << control_sum;
+    }else{
+        exit(0);
+    }
+    strict.close();
+    say.save_completed();
+}
 
-// void
-// GameState::load(){
-//     MessagePrinter say;
-//     say.loading();
-//     int current_sum = getSum();
-//     int correct = 0;
-//     std::ifstream strict;
-//     strict.open("check.txt");
-//     if( strict.is_open() ){
-//         strict >> correct;
-//     }
-//     strict.close();
-//     if( correct != current_sum ){
-//         throw CheatingAlert();
-//     }
+void
+GameState::load(){
+    MessagePrinter say;
+    say.loading();
+    int current_sum = getSum();
+    int correct = 0;
+    std::ifstream strict;
+    strict.open("check.txt");
+    if( strict.is_open() ){
+        strict >> correct;
+    }
+    strict.close();
+    if( correct != current_sum ){
+        throw CheatingAlert();
+    }
 
 
-//     std::ifstream in("seabattle.txt"); // окрываем файл для чтения
-//     if (in.is_open())
-//     {
-//         in >> *this;
-//     }else{
-//         throw FileDoesNotExist();
-//     }
-//     in.close();
-//     say.game_loaded();
-// }
+    std::ifstream in("seabattle.txt"); // окрываем файл для чтения
+    if (in.is_open())
+    {
+        in >> *this;
+    }else{
+        throw FileDoesNotExist();
+    }
+    in.close();
+    say.game_loaded();
+}

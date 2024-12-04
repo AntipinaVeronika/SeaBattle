@@ -26,13 +26,13 @@ public:
     friend std::ostream& operator<<( std::ostream& out, const GameState& state );
     friend std::istream& operator>>( std::istream& in, GameState& state );    
 
-    // int
-    // getSum();
+    int
+    getSum();
 
-    // void
-    // save();
+    void
+    save();
 
-    // void
-    // load();
+    void
+    load();
 };
 #endif

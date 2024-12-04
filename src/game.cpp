@@ -74,14 +74,16 @@ Game::move( int& count ){
 
 void
 Game::save(){
-    Keeper* save;
-    save->save( state );
+    // Keeper* save;
+    // save->save( state );
+    state->save();
 }
 
 void
 Game::load(){
-    Keeper* load;
-    load->load( state );
+    // Keeper* load;
+    // load->load( state );
+    state->load();
 }
 
 int
@@ -143,7 +145,7 @@ Game::Game(){
 
 Game::~Game(){
     //delete queue;
-    delete state;
+    delete this->state;
 }
 
 int 
