@@ -74,14 +74,14 @@ Game::move( int& count ){
 
 void
 Game::save(){
-    SaveLoad save;
+    Save save;
     save.save(this->state);
     //state->save();
 }
 
 void
 Game::load(){
-    SaveLoad load;
+    Load load;
     load.load(this->state);
    // state->load();
 }

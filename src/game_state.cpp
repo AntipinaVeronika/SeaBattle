@@ -20,10 +20,10 @@ GameState::GameState(){
     int answer = 0;
     input.get_answer( answer );
 
-    SaveLoad saveload;
     if( answer ){
         try{
-           saveload.load(this);
+            Load load;
+            load.load(this);
             //load();
         }catch( FileDoesNotExist& e ){
             std::cout << e.what();

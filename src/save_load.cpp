@@ -21,7 +21,7 @@ private:
                 throw CheatingAlert();
             }
         }else{
-            exit(0);
+            throw CheatingAlert();
         }
     }
 
