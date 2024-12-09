@@ -9,8 +9,8 @@ Game::move( int& count ){
     int x,y = 0;
     int answer = 0;
 
-    std::cout << "Do you want to save the game?\n";
-    std::cin >> answer;
+    Notify( EventType::Save );
+    state->input.get_answer( answer );
     if( answer ){
         try{
             save();
@@ -21,8 +21,8 @@ Game::move( int& count ){
         }
     }
 
-    std::cout << "Do you want to load the game?\n";
-    std::cin >> answer;
+    Notify( EventType::Load );
+    state->input.get_answer( answer );
     if( answer ){
         try{
             load();
@@ -33,13 +33,13 @@ Game::move( int& count ){
         }
     }
 
-    say.ability_needed();
+    Notify( EventType::Ab );
     try{
         state->input.get_answer( answer );
     }
     catch( IncorrectAbilityAnswer& e ){
         std::cout << e.what();
-        say.crime_and_punishment();
+        Notify( EventType::Crime );
         answer = 0;
     }
 
@@ -52,7 +52,7 @@ Game::move( int& count ){
         }
     }
 
-    say.ask_coordinates();
+    Notify( EventType::Input );
     bool flag = false;
     do{
         try{
@@ -120,7 +120,7 @@ Game::round(){
     }
 
     if( state->manager2->isOver() == 1 ){
-        std::cout << state->manager2->getShipIdx(0)->isDestroyed() << '\n';
+        // std::cout << state->manager2->getShipIdx(0)->isDestroyed() << '\n';
         return 1;
     }
     return 0;
@@ -131,21 +131,20 @@ Game::round(){
 //         manager1(manager1),manager2(manager2), queue(queue){}
 
 Game::Game(){
-    // InputHandler input;
-    // say.greeting();
     this->state = new GameState();
-    // (this->input).manager_initialize( *(state->manager1), *(state->manager2) );
-    // input.gameboard_initialize( *(state->player1), *(state->manager1), placement1 );
-    // input.e_gameboard_initialize( *(state->player1), *(state->player2), *(state->manager1), *(state->manager2), placement2 );
-    // AbilitiesManager* queue = new AbilitiesManager( *(state->player2) );
-    // this->queue = queue;
-    //this->state = new GameState( &player1, &player2, &manager1, &manager2, queue, placement1, placement2 );
-   // this->state = GameState();
+
+    AddObserver( new PrinterConsole() );
+   // message_observer = new Message( &code );
 }
 
 Game::~Game(){
     //delete queue;
     delete this->state;
+    while (!observers.empty()) {
+        delete observers.back();
+        observers.pop_back();
+    }
+    //delete message_observer;
 }
 
 int 
@@ -154,14 +153,30 @@ Game::start(){
     while( round_res ){
         round_res = round();
         if( round_res ){
-            say.congratulations();
+            Notify( EventType::Win );
             (state->input).enemy_s_manager( *(state->manager1), *(state->manager2) );
             (state->input).e_gameboard_initialize( *(state->player1), *(state->player2), *(state->manager1), *(state->manager2), state->placement2 );
         }
         else{
-            say.dont_be_upset();
+            Notify( EventType::Loss );
             break;
         }
     }
     return 1;
+}
+void 
+Game::AddObserver( IObserver* observer ) {
+    observers.push_back(observer);
+}
+       
+void 
+Game::RemoveObserver( IObserver* observer ) {
+    observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
+}
+void
+Game::Notify( EventType type) {
+    GameEvent event(type);
+    for (auto observer : observers) {
+        observer->Update(event);
+    }
 }

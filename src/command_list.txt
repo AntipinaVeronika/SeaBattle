@@ -1,0 +1,4 @@
+attack 0
+save 1
+load 2
+cast 3

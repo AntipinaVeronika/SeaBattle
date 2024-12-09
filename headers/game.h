@@ -2,9 +2,9 @@
 #include "ability_manager.h"
 #include "ship_manager.h"
 #include "game_state.h"
-
+#include "../src/printer_un.cpp"
 class Game{
-    MessagePrinter say;
+    std::vector<IObserver*> observers; 
    // InputHandler input;
     GameState* state;
 
@@ -23,4 +23,8 @@ public:
     Game();
    ~Game();
     int start();
+
+    void AddObserver(IObserver* observer);
+    void RemoveObserver(IObserver* observer);
+    void Notify( EventType event );
 };

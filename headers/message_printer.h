@@ -57,5 +57,8 @@ public:
 
     void
     load_needed();
+
+    void
+    save_needed();
 };
 #endif

@@ -102,3 +102,8 @@ void
 MessagePrinter::load_needed(){
     std::cout << "Do you want to load game? (1/0)\n";
 }
+
+void
+MessagePrinter::save_needed(){  
+    std::cout << "Do you want to save the game? (1/0)\n";
+}

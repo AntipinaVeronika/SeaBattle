@@ -1,11 +1,5 @@
-//#include "../headers/game_state.h"
-#include "save_load.cpp"
-// #include "file_not_found.cpp"
-// #include "cheating_alert.cpp"
-// // GameState::GameState( Gameboard* player1, Gameboard* player2, ShipManager* manager1, ShipManager* manager2, AbilitiesManager* queue, std::vector<std::vector<int>>& placement1, std::vector<std::vector<int>>& placement2 ):
-//     player1(player1),player2(player2),manager1(manager1),manager2(manager2),queue(queue), placement1(placement1), placement2(placement2){
-
-//     }
+#include "../headers/game_state.h"
+#include "keeper.cpp"
 
 GameState::GameState(){
     MessagePrinter say;
