@@ -26,13 +26,24 @@ public:
     friend std::ostream& operator<<( std::ostream& out, const GameState& state );
     friend std::istream& operator>>( std::istream& in, GameState& state );    
 
+    std::vector<std::vector<Cell>>
+    getUser();
+
+    std::vector<std::vector<Cell>>
+    getHidden();
+
     int
-    getSum();
+    getWidth();
 
-    void
-    save();
+    int
+    getHeight();
+    // int
+    // getSum();
 
-    void
-    load();
+    // void
+    // save();
+
+    // void
+    // load();
 };
 #endif

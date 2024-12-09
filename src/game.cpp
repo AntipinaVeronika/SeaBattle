@@ -88,7 +88,6 @@ Game::load(){
 
 int
 Game::round(){
-    Printer printer;
     //InputHandler input;
     int x = 0;
     int y = 0;
@@ -111,12 +110,7 @@ Game::round(){
             }
         }while( flag == false );
 
-        std::vector < std::vector <Cell> > users_gameboard_1 = state->player1->getUsersGameboard();
-        printer.printUsersGameboard( users_gameboard_1, state->player1->getWidth(), state->player1->getHeight() );
-
-        std::vector < std::vector <Cell> > hidden_gameboard_2 = state->player2->getHiddenGameboard();
-        printer.printHiddenGameboard( hidden_gameboard_2, state->player2->getWidth(), state->player2->getHeight() );
-
+        Notify( EventType::Hit );
     }
 
     if( state->manager2->isOver() == 1 ){
@@ -133,7 +127,7 @@ Game::round(){
 Game::Game(){
     this->state = new GameState();
 
-    AddObserver( new PrinterConsole() );
+    AddObserver( new PrinterConsole(this->state) );
    // message_observer = new Message( &code );
 }
 

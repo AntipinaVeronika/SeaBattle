@@ -12,6 +12,9 @@ public:
             throw FileDoesNotExist();
         }
         file << *state;
+       // file.close();
+    }
+    ~SaveKeeper(){
         file.close();
     }
 };
@@ -26,6 +29,9 @@ public:
             throw FileDoesNotExist();
         }
         file >> *state;
+       // file.close();
+    }
+    ~LoadKeeper(){
         file.close();
     }
 };
