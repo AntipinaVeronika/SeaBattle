@@ -39,8 +39,9 @@ Printer::printHiddenGameboard( std::vector < std:: vector <Cell> > e_gameboard, 
                     std::cout << "X ";
                 else
                     std::cout << "S ";
-            }else
+            }else{
                 std::cout << "? ";
+            }
         }
         std::cout << '\n';
     }

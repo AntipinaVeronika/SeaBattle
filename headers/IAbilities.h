@@ -6,14 +6,19 @@
 class IAbility{
 public:
     virtual void activateAbility() = 0;
+    virtual char secretCode() = 0;
+    virtual IAbility* clone() = 0;
 };
 
 class DoubleDamage: public IAbility{
     Gameboard& gameboard;
 public:
     DoubleDamage( Gameboard& gameboard );
+    DoubleDamage(const DoubleDamage& other);
     
     void activateAbility();
+    char secretCode();
+    IAbility* clone();
 };
 
 class Scanner: public IAbility{
@@ -23,16 +28,22 @@ class Scanner: public IAbility{
     Gameboard& gameboard;
 public:
     Scanner( Gameboard& gameboard );
+    Scanner(const Scanner& other);
 
     void activateAbility();
+    char secretCode();
+    IAbility* clone();
 };
 
 class Rafale: public IAbility{
     Gameboard& gameboard;
 public:
     Rafale( Gameboard& gameboard );
+    Rafale(const Rafale& other);
 
     void activateAbility();
+    char secretCode();
+    IAbility* clone();
 };
 #endif
 

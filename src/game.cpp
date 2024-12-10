@@ -1,79 +1,123 @@
+#include "../headers/game_state.h"
 #include "../headers/game.h"
+// #include "file_not_found.cpp"
+// #include "cheating_alert.cpp"
+#include "save_load.cpp"
+//think about it!
+void
+Game::move( int& count ){
+    int x,y = 0;
+    int answer = 0;
+
+    Notify( EventType::Save );
+    state->input.get_answer( answer );
+    if( answer ){
+        try{
+            save();
+        }catch( FileDoesNotExist& e ){
+            std::cout << e.what();
+        }catch( CheatingAlert& e ){
+            std::cout << e.what();
+        }
+    }
+
+    Notify( EventType::Load );
+    state->input.get_answer( answer );
+    if( answer ){
+        try{
+            load();
+        }catch( FileDoesNotExist& e ){
+            std::cout << e.what();
+        }catch( CheatingAlert& e ){
+            std::cout << e.what();
+        }
+    }
+
+    Notify( EventType::Ab );
+    try{
+        state->input.get_answer( answer );
+    }
+    catch( IncorrectAbilityAnswer& e ){
+        std::cout << e.what();
+        Notify( EventType::Crime );
+        answer = 0;
+    }
+
+    if( answer ){
+        try{
+            state->queue->useAbility();
+        }
+        catch( EmptyQueue& e ){
+            std::cout << e.what();
+        }
+    }
+
+    Notify( EventType::Input );
+    bool flag = false;
+    do{
+        try{
+            state->input.get_x_y( x, y );
+            state->player2->hitShip( x, y );
+            std::cout << "COUNT: " << count << "ARENOW: " << state->manager2->areLeft() << '\n';
+            flag = true;
+        }catch(MissingAim& e){
+            std::cout << e.what();
+            flag = false;
+        }
+    }while( flag == false );
+    state->player2->reset_damage();
+    if( state->manager2->areLeft() != count ){
+        state->queue->addAbility( *(state->player2) );
+        count = state->manager2->areLeft();
+    }
+}
+
+void
+Game::save(){
+    Save save;
+    save.save(this->state);
+    //state->save();
+}
+
+void
+Game::load(){
+    Load load;
+    load.load(this->state);
+   // state->load();
+}
 
 int
 Game::round(){
-    Printer printer;
     //InputHandler input;
     int x = 0;
     int y = 0;
-    int count = manager2.areLeft();
+    int count = state->manager2->areLeft();
 
-    int answer = 0;
-    while( manager1.isOver() != 1 && manager2.isOver() != 1){
-        say.ability_needed();
-        try{
-            input.get_answer( answer );
-        }
-        catch( IncorrectAbilityAnswer& e ){
-            std::cout << e.what();
-            say.crime_and_punishment();
-            answer = 0;
-        }
+    while( state->manager1->isOver() != 1 && state->manager2->isOver() != 1){
+        move( count );
 
-
-        if( answer ){
-            try{
-                queue.useAbility();
-            }
-            catch( EmptyQueue& e ){
-                std::cout << e.what();
-            }
-        }
-
-        say.ask_coordinates();
-        bool flag = false;
-        do{
-            try{
-                input.get_x_y( x, y );
-                player2.hitShip( x, y );
-                std::cout << "COUNT: " << count << "ARENOW: " << manager2.areLeft() << '\n';
-                flag = true;
-            }catch(MissingAim& e){
-                std::cout << e.what();
-                flag = false;
-            }
-        }while( flag == false );
-        player2.reset_damage();
-        if( manager2.areLeft() != count ){
-            queue.addAbility( player2 );
-            count = manager2.areLeft();
-        }
-
-        flag = false;
+        int flag = false;
         time_t timer;
         std::srand(time(&timer));
         do{
             try{
-                x = std::rand() % (player1.getWidth());
-                y = std::rand() % (player1.getHeight());
-                player1.hitShip( x, y );
+                x = std::rand() % (state->player1->getWidth());
+                y = std::rand() % (state->player1->getHeight());
+                state->player1->hitShip( x, y );
                 flag = true;
             }catch(MissingAim& e){
                 flag = false;
             }
         }while( flag == false );
 
-        std::vector < std::vector <Cell> > users_gameboard_1 = player1.getUsersGameboard();
-        printer.printUsersGameboard( users_gameboard_1, player1.getWidth(), player1.getHeight() );
-
-        std::vector < std::vector <Cell> > hidden_gameboard_2 = player2.getHiddenGameboard();
-        printer.printHiddenGameboard( hidden_gameboard_2, player2.getWidth(), player2.getHeight() );
-
+        Notify( EventType::Hit );
     }
-    if( manager2.isOver() == 1 )
+
+    if( state->manager2->isOver() == 1 ){
+        // std::cout << state->manager2->getShipIdx(0)->isDestroyed() << '\n';
         return 1;
-    else
-        return 0;
+    }
+    return 0;
 }
 
 // Game::Game( Gameboard& player1, Gameboard& player2, ShipManager& manager1, ShipManager& manager2, AbilitiesManager& queue ):
@@ -81,13 +125,20 @@ Game::round(){
 //         manager1(manager1),manager2(manager2), queue(queue){}
 
 Game::Game(){
-    //InputHandler input;
-    say.greeting();
-    input.manager_initialize( manager1, manager2 );
-    input.gameboard_initialize( player1, manager1 );
-    input.e_gameboard_initialize( player2, manager2 );
-    AbilitiesManager queue( player2 );
-    this->queue = queue;
+    this->state = new GameState();
+
+    AddObserver( new PrinterConsole(this->state) );
+   // message_observer = new Message( &code );
+}
+
+Game::~Game(){
+    //delete queue;
+    delete this->state;
+    while (!observers.empty()) {
+        delete observers.back();
+        observers.pop_back();
+    }
+    //delete message_observer;
 }
 
 int 
@@ -96,14 +147,30 @@ Game::start(){
     while( round_res ){
         round_res = round();
         if( round_res ){
-            say.congratulations();
-            input.enemy_s_manager( manager2 );
-            input.e_gameboard_initialize( player2, manager2 );
+            Notify( EventType::Win );
+            (state->input).enemy_s_manager( *(state->manager1), *(state->manager2) );
+            (state->input).e_gameboard_initialize( *(state->player1), *(state->player2), *(state->manager1), *(state->manager2), state->placement2 );
         }
         else{
-            say.dont_be_upset();
+            Notify( EventType::Loss );
             break;
         }
     }
     return 1;
+}
+void 
+Game::AddObserver( IObserver* observer ) {
+    observers.push_back(observer);
+}
+       
+void 
+Game::RemoveObserver( IObserver* observer ) {
+    observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
+}
+void
+Game::Notify( EventType type) {
+    GameEvent event(type);
+    for (auto observer : observers) {
+        observer->Update(event);
+    }
 }

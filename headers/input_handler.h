@@ -22,25 +22,25 @@ class InputHandler{
     gameboard_creation();
 
     void
-    enemy_rise_gb();
+    enemy_rise_gb( int height, int width );
 
     void 
-    place_opponent( ShipManager& manager );
+    place_opponent( ShipManager& manager1, ShipManager& manager, std::vector<std::vector<int>>& placement2 );
 
     void 
-    place_ships( ShipManager& manager1 );
+    place_ships( ShipManager& manager1, std::vector<std::vector<int>>& placement1 );
 
 public:
     InputHandler();
 
     void 
-    gameboard_initialize( Gameboard& player1, ShipManager& manager1 );
+    gameboard_initialize( Gameboard& player1, ShipManager& manager1, std::vector<std::vector<int>>& placement1 );
 
     void
-    e_gameboard_initialize( Gameboard& player2, ShipManager& manager2 );
+    e_gameboard_initialize( Gameboard& player1, Gameboard& player2, ShipManager& manager1, ShipManager& manager2, std::vector<std::vector<int>>& placement2 );
 
     void
-    enemy_s_manager( ShipManager& manager2 );
+    enemy_s_manager( ShipManager& manager1, ShipManager& manager2 );
 
     void 
     manager_initialize( ShipManager& manager1, ShipManager& manager2 );
