@@ -16,7 +16,7 @@ all: main
 main: $(OBJS)
 	g++ $(OBJS)
 
-printer_un.o: $(SRC_DIR)/printer_un.cpp observer.o
+printer_un.o: $(SRC_DIR)/printer_un.cpp $(HEADER_DIR)/printer_un.h observer.o
 	g++ -c $(SRC_DIR)/printer_un.cpp
 
 observer.o: $(SRC_DIR)/observer.cpp
