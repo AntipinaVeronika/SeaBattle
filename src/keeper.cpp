@@ -12,7 +12,6 @@ public:
             throw FileDoesNotExist();
         }
         file << *state;
-       // file.close();
     }
     ~SaveKeeper(){
         file.close();
@@ -29,7 +28,6 @@ public:
             throw FileDoesNotExist();
         }
         file >> *state;
-       // file.close();
     }
     ~LoadKeeper(){
         file.close();
@@ -82,7 +80,6 @@ private:
     void
     insecure_save( GameState* state ){
         SaveKeeper keep = SaveKeeper(state);
-        // keep.save();
     }
 
 public:
